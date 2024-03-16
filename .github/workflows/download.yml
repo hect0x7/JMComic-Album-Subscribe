@@ -70,7 +70,7 @@ jobs:
           git config --global user.email "93357912+hect0x7@users.noreply.github.com"
           git config --global user.name "hect0x7"
           git tag -a "v$version" -m "Version $version"
-          git add ./APK_VERSION.txt
-          git commit -m "update APK_VERSION.txt"
+          git add .github/workflows/download.yml
+          git commit -m "更新最新订阅信息"
           git push
           echo "finished"
