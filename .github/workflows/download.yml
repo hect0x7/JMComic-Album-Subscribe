@@ -65,11 +65,8 @@ jobs:
       - name: Commit
         if: ${{ steps.main.outputs.found_new == 'true'}}
         run: |
-          # Extract the version number from the previous step
-          version=${{ steps.script.outputs.new_ver }}
           git config --global user.email "93357912+hect0x7@users.noreply.github.com"
           git config --global user.name "hect0x7"
-          git tag -a "v$version" -m "Version $version"
           git add .github/workflows/download.yml
           git commit -m "更新最新订阅信息"
           git push
