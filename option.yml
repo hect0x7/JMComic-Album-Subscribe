@@ -1,0 +1,27 @@
+dir_rule:
+  rule: Bd / Pname
+  base_dir: ${JM_DOWNLOAD_DIR}
+
+client:
+  impl: api
+  domain:
+    html: [ jmcomic1.me, jmcomic.me ]
+
+# 插件配置
+plugins:
+  after_init:
+    - plugin: subscribe_album_update
+      kwargs:
+        download_if_has_update: true
+        auto_update_after_download: true
+        email_notify:
+          msg_from: ${EMAIL_FROM}
+          msg_to: ${EMAIL_TO}
+          password: ${EMAIL_PASS}
+          title: ${EMAIL_TITLE}
+          content: ${EMAIL_CONTENT}
+
+        album_photo_dict:
+          324930: 424507
+
+

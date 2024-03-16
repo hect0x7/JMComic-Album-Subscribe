@@ -1,0 +1,81 @@
+name: 订阅禁漫本子更新
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/download.yml' # 工作流定义
+      - 'main.py' # 下载脚本
+      - 'option.yml' # 配置文件
+
+jobs:
+  crawler:
+    runs-on: ubuntu-latest
+    env:
+      # 登录相关secrets
+      JM_USERNAME: ${{ secrets.JM_USERNAME }}
+      JM_PASSWORD: ${{ secrets.JM_PASSWORD }}
+
+      # 邮件相关secrets
+      EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+      EMAIL_TO: ${{ secrets.EMAIL_TO }}
+      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+      EMAIL_TITLE: ${{ secrets.EMAIL_TITLE }}
+      EMAIL_CONTENT: ${{ secrets.EMAIL_CONTENT }}
+      
+      # 固定值
+      JM_DOWNLOAD_DIR: /home/runner/work/jmcomic/download/
+      ZIP_NAME: '本子.tar.gz'
+      UPLOAD_NAME: '下载完成的本子'
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependency
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: 安装jmcomic（pip）
+        if: ${{ github.ref != 'refs/heads/dev' }}
+        run: |
+          pip install jmcomic -i https://pypi.org/project --upgrade
+
+      - name: 运行下载脚本
+        id: main
+        run: |
+          python main.py
+          python .github/release.py
+
+      - name: 压缩文件
+        if: ${{ steps.main.outputs.found_new == 'true'}}
+        run: |
+          cd $JM_DOWNLOAD_DIR
+          tar -zcvf "../$ZIP_NAME" ./
+          mv "../$ZIP_NAME" .
+
+      - name: 上传结果
+        if: ${{ steps.main.outputs.found_new == 'true'}}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.UPLOAD_NAME }}
+          path: ${{ env.JM_DOWNLOAD_DIR }}/${{ env.ZIP_NAME }}
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Commit
+        if: ${{ steps.main.outputs.found_new == 'true'}}
+        run: |
+          # Extract the version number from the previous step
+          version=${{ steps.script.outputs.new_ver }}
+          git config --global user.email "93357912+hect0x7@users.noreply.github.com"
+          git config --global user.name "hect0x7"
+          git tag -a "v$version" -m "Version $version"
+          git add ./APK_VERSION.txt
+          git commit -m "update APK_VERSION.txt"
+          git push
+          echo "finished"
