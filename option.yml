@@ -29,7 +29,7 @@ plugins:
   - kwargs:
       album_photo_dict:
         324930: '424507'
-      auto_update_after_download: false
+      auto_update_after_download: true
       download_if_has_update: true
       email_notify:
         content: ${EMAIL_CONTENT}

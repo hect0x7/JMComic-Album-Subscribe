@@ -65,6 +65,7 @@ jobs:
           retention-days: 90
 
       - name: Commit
+        continue-on-error: true
         if: ${{ steps.main.outputs.found_new == 'true'}}
         run: |
           git config --global user.email "93357912+hect0x7@users.noreply.github.com"
