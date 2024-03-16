@@ -1,27 +1,42 @@
-dir_rule:
-  rule: Bd / Pname
-  base_dir: ${JM_DOWNLOAD_DIR}
-
 client:
-  impl: api
+  cache: null
   domain:
-    html: [ jmcomic1.me, jmcomic.me ]
-
-# 插件配置
+    html:
+    - jmcomic1.me
+    - jmcomic.me
+  impl: api
+  postman:
+    meta_data:
+      headers: null
+      impersonate: chrome110
+      proxies: {}
+    type: cffi
+  retry_times: 5
+dir_rule:
+  base_dir: /home/runner/work/jmcomic/download
+  rule: Bd / Pname
+download:
+  cache: true
+  image:
+    decode: true
+    suffix: null
+  threading:
+    image: 30
+    photo: 4
+log: true
 plugins:
   after_init:
-    - plugin: subscribe_album_update
-      kwargs:
-        download_if_has_update: true
-        auto_update_after_download: true
-        email_notify:
-          msg_from: ${EMAIL_FROM}
-          msg_to: ${EMAIL_TO}
-          password: ${EMAIL_PASS}
-          title: ${EMAIL_TITLE}
-          content: ${EMAIL_CONTENT}
-
-        album_photo_dict:
-          324930: 424507
-
-
+  - kwargs:
+      album_photo_dict:
+        324930: '435913'
+      auto_update_after_download: true
+      download_if_has_update: true
+      email_notify:
+        content: ${EMAIL_CONTENT}
+        msg_from: ${EMAIL_FROM}
+        msg_to: ${EMAIL_TO}
+        password: ${EMAIL_PASS}
+        title: ${EMAIL_TITLE}
+    plugin: subscribe_album_update
+  valid: log
+version: '2.1'
