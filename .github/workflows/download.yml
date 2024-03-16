@@ -2,6 +2,8 @@ name: 订阅禁漫本子更新
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * *'
   push:
     paths:
       - '.github/workflows/download.yml' # 工作流定义
