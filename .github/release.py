@@ -7,7 +7,5 @@ def add_output(k, v):
 
 
 path = os.getenv('JM_DOWNLOAD_DIR', None)
-if path:
-    files = files_of_dir(path)
-    if len(files) != 0:
-        add_output('found_new', 'true')
+if path and file_exists(path) and len(files_of_dir(path)) != 0:
+    add_output('found_new', 'true')
